@@ -1,45 +1,44 @@
 package ru.netology.manager;
 
-public class AfishaManager {
+import ru.netology.domain.FilmItem;
+import ru.netology.repository.FilmRepository;
 
-    private FilmItem[] films = new FilmItem[0];
+public class AfishaManager {
+    private FilmRepository repository;
     private int defaultAfishaLength = 10;
     private int customAfishaLength;
 
-    public AfishaManager() {
+    public AfishaManager(FilmRepository repository) {
+        this.repository = repository;
     }
 
-    public AfishaManager(int customAfishaLength) {
+    public AfishaManager(FilmRepository repository, int customAfishaLength) {
+        this.repository = repository;
         this.customAfishaLength = customAfishaLength;
     }
 
     public void addFilm(FilmItem film) {
-        int length = films.length + 1;
-        FilmItem[] tmp = new FilmItem[length];
-        System.arraycopy(films, 0, tmp, 0, films.length);
-        int index = tmp.length - 1;
-        tmp[index] = film;
-        films = tmp;
+        repository.save(film);
     }
 
     public FilmItem[] getFilms() {
-        int length = films.length;
+        FilmItem[] filmsFromRepo = repository.findAll();
+        int length = filmsFromRepo.length;
 
         if (customAfishaLength <= 0) {
-            if (defaultAfishaLength < films.length) {
+            if (defaultAfishaLength < filmsFromRepo.length) {
                 length = defaultAfishaLength;
             }
         } else {
-            if (customAfishaLength < films.length) {
+            if (customAfishaLength < filmsFromRepo.length) {
                 length = customAfishaLength;
             }
         }
 
         FilmItem[] result = new FilmItem[length];
-
         for (int i = 0; i < result.length; i++) {
-            int index = films.length - i - 1;
-            result[i] = films[index];
+            int index = filmsFromRepo.length - i - 1;
+            result[i] = filmsFromRepo[index];
         }
         return result;
     }

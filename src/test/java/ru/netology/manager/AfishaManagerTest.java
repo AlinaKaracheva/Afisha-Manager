@@ -2,11 +2,22 @@ package ru.netology.manager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import ru.netology.domain.FilmItem;
+import ru.netology.repository.FilmRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class AfishaManagerTest {
-    AfishaManager manager = new AfishaManager();
+    @Mock
+    private FilmRepository repository;
+    @InjectMocks
+    AfishaManager manager = new AfishaManager(repository);
 
     private FilmItem film1 = new FilmItem(1, "Бладшот", "боевик", 2020);
     private FilmItem film2 = new FilmItem(2, "Вперед", "мультфильм", 2020);
@@ -22,124 +33,115 @@ public class AfishaManagerTest {
 
     @BeforeEach
     void setUp() {
-        AfishaManager manager = new AfishaManager();
+        manager = new AfishaManager(repository);
     }
 
     @Test
     void shouldGetLastTenIfTen() {
-        manager.addFilm(film1);
-        manager.addFilm(film2);
-        manager.addFilm(film3);
-        manager.addFilm(film4);
-        manager.addFilm(film5);
-        manager.addFilm(film6);
-        manager.addFilm(film7);
-        manager.addFilm(film8);
-        manager.addFilm(film9);
-        manager.addFilm(film10);
+        FilmItem[] returned = new FilmItem[]{film1, film2, film3, film4, film5, film6, film7, film8, film9, film10};
+        doReturn(returned).when(repository).findAll();
+
         FilmItem[] expected = new FilmItem[]{film10, film9, film8, film7, film6, film5, film4, film3, film2, film1};
         FilmItem[] actual = manager.getFilms();
+
         assertArrayEquals(expected, actual);
+
+        verify(repository, times(1)).findAll();
     }
 
     @Test
     void shouldGetLastTenIfEleven() {
-        manager.addFilm(film1);
-        manager.addFilm(film2);
-        manager.addFilm(film3);
-        manager.addFilm(film4);
-        manager.addFilm(film5);
-        manager.addFilm(film6);
-        manager.addFilm(film7);
-        manager.addFilm(film8);
-        manager.addFilm(film9);
-        manager.addFilm(film10);
-        manager.addFilm(film11);
+        FilmItem[] returned = new FilmItem[]{film1, film2, film3, film4, film5, film6, film7, film8, film9, film10, film11};
+        doReturn(returned).when(repository).findAll();
+
         FilmItem[] expected = new FilmItem[]{film11, film10, film9, film8, film7, film6, film5, film4, film3, film2};
         FilmItem[] actual = manager.getFilms();
+
         assertArrayEquals(expected, actual);
+
+        verify(repository, times(1)).findAll();
     }
 
     @Test
     void shouldNotGetFilmsIfNoFilms() {
+        FilmItem[] returned = new FilmItem[]{};
+        doReturn(returned).when(repository).findAll();
+
         FilmItem[] expected = new FilmItem[]{};
         FilmItem[] actual = manager.getFilms();
+
         assertArrayEquals(expected, actual);
+
+        verify(repository, times(1)).findAll();
+
     }
 
     @Test
     void shouldGetOneIfOne() {
-        manager.addFilm(film1);
+        FilmItem[] returned = new FilmItem[]{film1};
+        doReturn(returned).when(repository).findAll();
+
         FilmItem[] expected = new FilmItem[]{film1};
         FilmItem[] actual = manager.getFilms();
+
         assertArrayEquals(expected, actual);
+
+        verify(repository, times(1)).findAll();
     }
 
     @Test
     void shouldGetLastFiveIfFive() {
-        AfishaManager manager = new AfishaManager(5);
-        manager.addFilm(film1);
-        manager.addFilm(film2);
-        manager.addFilm(film3);
-        manager.addFilm(film4);
-        manager.addFilm(film5);
+        manager = new AfishaManager(repository, 5);
+        FilmItem[] returned = new FilmItem[]{film1, film2, film3, film4, film5};
+        doReturn(returned).when(repository).findAll();
+
         FilmItem[] expected = new FilmItem[]{film5, film4, film3, film2, film1};
         FilmItem[] actual = manager.getFilms();
+
         assertArrayEquals(expected, actual);
+
+        verify(repository, times(1)).findAll();
     }
 
     @Test
     void shouldGetLastFiveIfMore() {
-        AfishaManager manager = new AfishaManager(5);
-        manager.addFilm(film1);
-        manager.addFilm(film2);
-        manager.addFilm(film3);
-        manager.addFilm(film4);
-        manager.addFilm(film5);
-        manager.addFilm(film6);
-        manager.addFilm(film7);
-        manager.addFilm(film8);
-        manager.addFilm(film9);
-        manager.addFilm(film10);
-        manager.addFilm(film11);
+        manager = new AfishaManager(repository, 5);
+        FilmItem[] returned = new FilmItem[]{film1, film2, film3, film4, film5, film6, film7, film8, film9, film10, film11};
+        doReturn(returned).when(repository).findAll();
+
         FilmItem[] expected = new FilmItem[]{film11, film10, film9, film8, film7};
         FilmItem[] actual = manager.getFilms();
+
         assertArrayEquals(expected, actual);
+
+        verify(repository, times(1)).findAll();
     }
 
     @Test
     void shouldGetTenIfDefaultIfZero() {
-        AfishaManager manager = new AfishaManager(0);
-        manager.addFilm(film1);
-        manager.addFilm(film2);
-        manager.addFilm(film3);
-        manager.addFilm(film4);
-        manager.addFilm(film5);
-        manager.addFilm(film6);
-        manager.addFilm(film7);
-        manager.addFilm(film8);
-        manager.addFilm(film9);
-        manager.addFilm(film10);
+        manager = new AfishaManager(repository, 0);
+        FilmItem[] returned = new FilmItem[]{film1, film2, film3, film4, film5, film6, film7, film8, film9, film10};
+        doReturn(returned).when(repository).findAll();
+
         FilmItem[] expected = new FilmItem[]{film10, film9, film8, film7, film6, film5, film4, film3, film2, film1};
         FilmItem[] actual = manager.getFilms();
+
         assertArrayEquals(expected, actual);
+
+        verify(repository, times(1)).findAll();
     }
 
     @Test
     void shouldGetTenIfDefaultLessZero() {
-        AfishaManager manager = new AfishaManager(-3);
-        manager.addFilm(film1);
-        manager.addFilm(film2);
-        manager.addFilm(film3);
-        manager.addFilm(film4);
-        manager.addFilm(film5);
-        manager.addFilm(film6);
-        manager.addFilm(film7);
-        manager.addFilm(film8);
-        manager.addFilm(film9);
-        manager.addFilm(film10);
+        manager = new AfishaManager(repository, -3);
+        FilmItem[] returned = new FilmItem[]{film1, film2, film3, film4, film5, film6, film7, film8, film9, film10};
+        doReturn(returned).when(repository).findAll();
+
         FilmItem[] expected = new FilmItem[]{film10, film9, film8, film7, film6, film5, film4, film3, film2, film1};
         FilmItem[] actual = manager.getFilms();
+
         assertArrayEquals(expected, actual);
+
+        verify(repository, times(1)).findAll();
     }
 }
